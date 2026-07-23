@@ -49,8 +49,10 @@ Team $4/user/mo) that grants the 3,000 minutes.
 - **`Package` job runs only on push to `main`** — PRs skip the Docker build.
 - **GHA layer cache** — unchanged `composer install` / base layers are restored,
   not rebuilt (free, within the 10 GB cache limit).
-- **`[skip ci]`** in a commit message skips the whole run (0 minutes) — useful
-  for docs-only changes like this one.
+- **`[skip ci]`** in a commit message skips the whole run (0 minutes) — a
+  manual, per-commit escape hatch.
+- **`paths-ignore`** on the push trigger (`**.md`, `docs/**`) skips docs-only
+  pushes to `main` automatically — no commit-message tag needed.
 
 ## Manual step (private repos)
 
