@@ -1,0 +1,23 @@
+# VCS / CI
+.git
+.github
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yaml
+docker-compose*.yml
+
+# Build artifacts / dependencies (regenerated inside the image)
+vendor/
+var/
+
+# Local environment overrides (never bake these into the image)
+.env.local
+.env.*.local
+.env.local.php
+
+# Editor / docs
+.editorconfig
+*.md

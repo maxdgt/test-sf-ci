@@ -1,0 +1,21 @@
+# Production topology: nginx (web) in front of PHP-FPM (app).
+services:
+  app:
+    build:
+      context: .
+      target: runtime
+    image: symfony-app:latest
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: 0
+    # No published ports: only nginx talks to FPM, over the internal network.
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    image: symfony-web:latest
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
