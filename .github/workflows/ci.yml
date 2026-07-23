@@ -4,6 +4,12 @@ name: CI
 on:
   push:
     branches: [main]
+    # Docs-only pushes to main skip the pipeline automatically (0 minutes).
+    # Kept off the pull_request trigger so a skipped run can never block a
+    # required status check on a PR.
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   pull_request:
     branches: [main]
 
