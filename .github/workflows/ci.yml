@@ -79,6 +79,11 @@ jobs:
     # Test job alone, saving ~2 billable minutes per PR commit.
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    env:
+      # Publishing is skipped until these secrets are set, so the pipeline
+      # stays green before Docker Hub is configured.
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -120,6 +125,28 @@ jobs:
           if [ "$code" != "200" ] && [ "$code" != "404" ]; then
             echo "Unexpected status $code"; docker compose logs; exit 1
           fi
+
+      # ── Publish (only after the smoke test passes) ─────────────
+      - name: Log in to Docker Hub
+        if: env.DOCKERHUB_TOKEN != ''
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Tag & push images to Docker Hub
+        if: env.DOCKERHUB_TOKEN != ''
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          for name in app web; do
+            repo="${DOCKERHUB_USERNAME}/symfony-${name}"
+            docker tag "symfony-${name}:latest" "${repo}:latest"
+            docker tag "symfony-${name}:latest" "${repo}:${SHA}"
+            docker push "${repo}:latest"
+            docker push "${repo}:${SHA}"
+            echo "Pushed ${repo}:latest and ${repo}:${SHA}"
+          done
 
       - name: Dump container logs
         if: always()
