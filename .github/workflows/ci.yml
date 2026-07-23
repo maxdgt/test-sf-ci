@@ -10,6 +10,12 @@ on:
 permissions:
   contents: read
 
+# Cancel an in-flight run when a newer commit lands on the same ref,
+# so you never pay for builds you have already superseded.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # ── Test ─────────────────────────────────────────────────────
   test:
@@ -63,6 +69,9 @@ jobs:
   package:
     name: Package (Docker)
     needs: test
+    # Build the Docker image only on pushes to main. Pull requests run the
+    # Test job alone, saving ~2 billable minutes per PR commit.
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
