@@ -4,7 +4,7 @@
 # Web image — nginx mainline. Serves static files from public/ and
 # proxies PHP requests to the FPM container (service "app":9000).
 # ──────────────────────────────────────────────────────────────
-FROM nginx:mainline
+FROM nginx:1.31.3
 
 # curl for the container healthcheck.
 RUN apt-get update \

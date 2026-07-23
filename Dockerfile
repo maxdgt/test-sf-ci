@@ -4,7 +4,7 @@
 # App image — PHP 8.4 FPM (Debian Bookworm). Fully supported by
 # Symfony 7.4. Serves FastCGI on :9000; nginx sits in front of it.
 # ──────────────────────────────────────────────────────────────
-FROM php:8.4-fpm-bookworm AS base
+FROM php:8.4.3-fpm-bookworm AS base
 
 # Robust extension installer (pulls the right system libs automatically).
 COPY --from=mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/local/bin/
